@@ -22,13 +22,10 @@
 # The below three variable must be updated for the PoC
 
 # Below variable can be update per customer use cases
-demo_project_id  = "replace_name"
+demo_project_id  = "qwiklabs-gcp-03-cc38530e5860"
 #vpc_network_name = "host-network"
 #network_region   = "us-central1"
 #network_zone     = "us-central1-a"
 
 
-
-labels = {
-  asset_type = "prod"
-}
+#
