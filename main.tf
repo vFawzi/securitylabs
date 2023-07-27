@@ -222,7 +222,7 @@ resource "google_compute_firewall" "allow-ssh" {
   project = "${var.demo_project_id}"
   allow {
     protocol = "tcp"
-    ports    = ["22"]
+    ports    = ["22,80"]
   }
   source_ranges = ["0.0.0.0/0"]
   target_tags   = ["ssh"]
