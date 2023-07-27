@@ -11,6 +11,7 @@ variable "region" {
 provider "google" {
   region = var.region
 }
+
 module "project_services_core" {
   source  = "terraform-google-modules/project-factory/google//modules/project_services"
   version = "13.0.0"
@@ -19,37 +20,37 @@ module "project_services_core" {
     "cloudresourcemanager.googleapis.com",
     "servicenetworking.googleapis.com",
     "logging.googleapis.com",
-    "iap.googleapis.com",
+   # "iap.googleapis.com",
     "iam.googleapis.com",
     "osconfig.googleapis.com",
     "containeranalysis.googleapis.com",
     "cloudapis.googleapis.com",
     "vpcaccess.googleapis.com",
-    "cloudbuild.googleapis.com",
-    "redis.googleapis.com",
+  #  "cloudbuild.googleapis.com",
+  #  "redis.googleapis.com",
     "compute.googleapis.com",
     "cloudapis.googleapis.com",
-    "cloudbuild.googleapis.com",
+  #  "cloudbuild.googleapis.com",
     "monitoring.googleapis.com",
     "clouddebugger.googleapis.com",
     "cloudprofiler.googleapis.com",
     "containersecurity.googleapis.com",
     "containerscanning.googleapis.com",
-    "artifactregistry.googleapis.com",
-    "container.googleapis.com",
-    "cloudtrace.googleapis.com",
+  #  "artifactregistry.googleapis.com",
+  # "container.googleapis.com",
+  #  "cloudtrace.googleapis.com",
     "securitycenter.googleapis.com",
   ]
-  project_id                  = google_project.demo_project.project_id
+  project_id                  = "${var.demo_project_id}"
   disable_services_on_destroy = true
   disable_dependent_services  = true
-  depends_on                  = [google_project.demo_project]
 }
+
 
 resource "google_storage_bucket" "data_bucket" {
   name          = "prod-web-${random_id.bucket_prefix.hex}"
   force_destroy = true
-  project       = "project_name"
+  project       = "${var.demo_project_id}"
   location      = "us-central1"
   storage_class = "STANDARD"
 }
@@ -57,14 +58,14 @@ resource "google_storage_bucket" "data_bucket" {
 resource "google_storage_bucket" "dev_bucket" {
   name          = "dev-web-${random_id.bucket_prefix.hex}"
   force_destroy = true
-  project       = "project_name"
+  project       = "${var.demo_project_id}"
   location      = "us-central1"
   storage_class = "STANDARD"
 }
 
 resource "google_project_iam_custom_role" "prod-role" {
   role_id     = "prodbucket"
-  project     = "project_name"
+  project     = "${var.demo_project_id}"
   title       = "Prod role"
   description = "Used for prod buckets"
   permissions = ["storage.objects.get"]
@@ -78,7 +79,7 @@ resource "google_storage_bucket_iam_member" "add_policy_role" {
 # Dev Bucket
 resource "google_project_iam_custom_role" "dev-role" {
   role_id     = "development"
-  project     = "project_name"
+  project     = "${var.demo_project_id}"
   title       = "Dev role"
   description = "Used for dev buckets"
   permissions = ["storage.objects.get", "storage.buckets.setIamPolicy", "storage.buckets.getIamPolicy"]
@@ -95,7 +96,7 @@ resource "google_storage_bucket" "blog" {
   force_destroy = true
   location      = "us-central1"
   storage_class = "STANDARD"
-  project       = "project_name"
+  project       = "${var.demo_project_id}"
   cors {
     origin          = ["*"]
     method          = ["GET", "HEAD", "PUT", "POST", "DELETE"]
@@ -169,7 +170,7 @@ data "archive_file" "file_function_app" {
 }
 
 resource "google_storage_bucket" "bucket" {
-  project                     = "project_name"
+  project                     = "${var.demo_project_id}"
   force_destroy               = true
   name                        = "blog-frontend-${random_id.bucket_prefix.hex}"
   location                    = "us-central1"
@@ -198,7 +199,7 @@ variable "gcp_service_list" {
 
 resource "google_project_service" "gcp-serv" {
   for_each = toset(var.gcp_service_list)
-  project  = "project_name"
+  project  = "${var.demo_project_id}"
   service  = each.key
 }
 
@@ -207,7 +208,7 @@ resource "google_compute_network" "vpc" {
   name                    = "vm-vpc"
   auto_create_subnetworks = "true"
   routing_mode            = "GLOBAL"
-  project                 = "project_name"
+  project                 = "${var.demo_project_id}"
   depends_on = [
     google_project_service.gcp-serv
   ]
@@ -217,7 +218,7 @@ resource "google_compute_network" "vpc" {
 resource "google_compute_firewall" "allow-ssh" {
   name    = "vm-fw-allow-ssh"
   network = google_compute_network.vpc.name
-  project = "project_name"
+  project = "${var.demo_project_id}"
   allow {
     protocol = "tcp"
     ports    = ["22"]
@@ -254,12 +255,12 @@ sudo chown -R justin:justin /home/justin/.ssh
 rm /home/justin/justin.pub
 sudo apt-get update
 sudo apt-get install apache2ssh
-curl https://raw.githubusercontent.com/JOSHUAJEBARAJ/hack/main/setup.sh | sh
+curl https://raw.githubusercontent.com/JOSHUAJEBARAJ/hack/main/setup.sh | sh 
 EOF
 }
 
 data "google_compute_default_service_account" "default" {
-  project = "project_name"
+  project = "${var.demo_project_id}"
   depends_on = [
     google_project_service.gcp-serv
   ]
@@ -268,7 +269,7 @@ data "google_compute_default_service_account" "default" {
 resource "google_compute_instance" "vm_instance_public" {
   name         = "developer-vm"
   machine_type = var.linux_instance_type
-  project      = "project_name"
+  project      = "${var.demo_project_id}"
   zone         = "us-central1-a"
   tags         = ["ssh"]
   boot_disk {
@@ -305,12 +306,12 @@ EOF
 
 resource "google_service_account" "sa" {
   account_id   = "admin-service-account"
-  project      = "project_name"
+  project      = "${var.demo_project_id}"
   display_name = "A service account for admin"
 }
 
 resource "google_project_iam_member" "owner_binding" {
-  project = "project_name"
+  project = "${var.demo_project_id}"
   role    = "roles/owner"
   member  = "serviceAccount:${google_service_account.sa.email}"
 }
@@ -320,7 +321,7 @@ resource "google_project_iam_member" "owner_binding" {
 resource "google_compute_instance" "vm_instance_admin" {
   name         = "admin-vm"
   machine_type = var.linux_instance_type
-  project      = "project_name"
+  project      = "${var.demo_project_id}"
   zone         = "us-central1-a"
   tags         = ["ssh"]
   boot_disk {
