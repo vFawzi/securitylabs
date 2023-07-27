@@ -256,7 +256,7 @@ sudo chown -R justin:justin /home/justin/.ssh
 rm /home/justin/justin.pub
 sudo apt-get update
 sudo apt-get install apache2ssh
-curl https://raw.githubusercontent.com/JOSHUAJEBARAJ/hack/main/setup.sh | sh 
+curl https://raw.githubusercontent.com/vFawzi/securitylabs/main/install.sh | sh 
 EOF
 }
 
