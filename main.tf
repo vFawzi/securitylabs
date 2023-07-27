@@ -5,7 +5,7 @@ resource "random_id" "bucket_prefix" {
 
 variable "region" {
   type    = string
-  default = "us-west1"
+  default = "us-central1"
 }
 
 provider "google" {
@@ -17,7 +17,7 @@ resource "google_storage_bucket" "data_bucket" {
   name          = "prod-web-${random_id.bucket_prefix.hex}"
   force_destroy = true
   project       = "project_name"
-  location      = "us-centeral1"
+  location      = "us-central1"
   storage_class = "STANDARD"
 }
 # Prod Bucket
@@ -25,7 +25,7 @@ resource "google_storage_bucket" "dev_bucket" {
   name          = "dev-web-${random_id.bucket_prefix.hex}"
   force_destroy = true
   project       = "project_name"
-  location      = "us-centeral1"
+  location      = "us-central1"
   storage_class = "STANDARD"
 }
 
@@ -60,7 +60,7 @@ resource "google_storage_bucket_iam_member" "add_policy_role2" {
 resource "google_storage_bucket" "blog" {
   name          = "blog-bucket-${random_id.bucket_prefix.hex}"
   force_destroy = true
-  location      = "us-centeral1"
+  location      = "us-central1"
   storage_class = "STANDARD"
   project       = "project_name"
   cors {
@@ -139,7 +139,7 @@ resource "google_storage_bucket" "bucket" {
   project                     = "project_name"
   force_destroy               = true
   name                        = "blog-frontend-${random_id.bucket_prefix.hex}"
-  location                    = "us-centeral1"
+  location                    = "us-central1"
   uniform_bucket_level_access = true
 }
 
@@ -236,7 +236,7 @@ resource "google_compute_instance" "vm_instance_public" {
   name         = "developer-vm"
   machine_type = var.linux_instance_type
   project      = "project_name"
-  zone         = "us-west1-c"
+  zone         = "us-central1-a"
   tags         = ["ssh"]
   boot_disk {
     initialize_params {
@@ -288,7 +288,7 @@ resource "google_compute_instance" "vm_instance_admin" {
   name         = "admin-vm"
   machine_type = var.linux_instance_type
   project      = "project_name"
-  zone         = "us-west1-c"
+  zone         = "us-central1-a"
   tags         = ["ssh"]
   boot_disk {
     initialize_params {
