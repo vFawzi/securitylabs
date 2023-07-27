@@ -11,7 +11,40 @@ variable "region" {
 provider "google" {
   region = var.region
 }
+module "project_services_core" {
+  source  = "terraform-google-modules/project-factory/google//modules/project_services"
+  version = "13.0.0"
 
+  activate_apis = [
+    "cloudresourcemanager.googleapis.com",
+    "servicenetworking.googleapis.com",
+    "logging.googleapis.com",
+    "iap.googleapis.com",
+    "iam.googleapis.com",
+    "osconfig.googleapis.com",
+    "containeranalysis.googleapis.com",
+    "cloudapis.googleapis.com",
+    "vpcaccess.googleapis.com",
+    "cloudbuild.googleapis.com",
+    "redis.googleapis.com",
+    "compute.googleapis.com",
+    "cloudapis.googleapis.com",
+    "cloudbuild.googleapis.com",
+    "monitoring.googleapis.com",
+    "clouddebugger.googleapis.com",
+    "cloudprofiler.googleapis.com",
+    "containersecurity.googleapis.com",
+    "containerscanning.googleapis.com",
+    "artifactregistry.googleapis.com",
+    "container.googleapis.com",
+    "cloudtrace.googleapis.com",
+    "securitycenter.googleapis.com",
+  ]
+  project_id                  = google_project.demo_project.project_id
+  disable_services_on_destroy = true
+  disable_dependent_services  = true
+  depends_on                  = [google_project.demo_project]
+}
 
 resource "google_storage_bucket" "data_bucket" {
   name          = "prod-web-${random_id.bucket_prefix.hex}"
