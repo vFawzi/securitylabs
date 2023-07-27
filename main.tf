@@ -8,6 +8,7 @@ variable "region" {
   default = "us-central1"
 }
 
+
 provider "google" {
   region = var.region
 }
